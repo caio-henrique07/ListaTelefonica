@@ -1,27 +1,45 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ListaTelefonica
 {
     public partial class Form1 : Form
     {
-        string[,] lista;
+        string[][] lista;
         readonly int MAX = 100;
-        int itens = 0;
 
         public Form1()
         {
             InitializeComponent();
-            lista = new string[MAX, 2];
+            lista = new string[MAX][];
             this.KeyPreview = true;
             this.KeyDown += Form1_KeyDown;
+        }
+
+        int Length(string[][] e)
+        {
+            int itens = 0;
+            for (int i = 0; i < e.Length; i++)
+            {
+                if (e[i] != null)
+                {
+                    itens++;
+                }
+            }
+            return itens;
+        }
+
+        int Length(string[] e)
+        {
+            int itens = 0;
+            for (int i = 0; i < e.Length; i++)
+            {
+                if (e[i] != null)
+                {
+                    itens++;
+                }
+            }
+            return itens;
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -47,13 +65,13 @@ namespace ListaTelefonica
         void Atualizar()
         {
             dgvLista.Rows.Clear();
-            for (int i = 0; i < itens; i++)
+            for (int i = 0; i < Length(lista); i++)
             {
                 DataGridViewRow row = new DataGridViewRow();
                 row.CreateCells(dgvLista);
-                for (int j = 0; j < 2; j++)
+                for (int j = 0; j < Length(lista[i]); j++)
                 {
-                    row.Cells[j].Value = lista[i, j];
+                    row.Cells[j].Value = lista[i][j];
                 }
                 dgvLista.Rows.Add(row);
             }
@@ -71,15 +89,18 @@ namespace ListaTelefonica
                 return;
             }
 
-            if (itens >= MAX)
+            if (Length(lista) >= MAX)
             {
                 MessageBox.Show("A lista está cheia!", "Máximo de itens atingido");
                 return;
             }
 
-            lista[itens, 0] = txtNome.Text;
-            lista[itens, 1] = txtTel.Text;
-            itens++;
+            int id = 1;
+            if(Length(lista) > 0)
+            {
+                id = int.Parse(lista[Length(lista) - 1][0]) + 1;
+            }
+            lista[Length(lista)] = new string[] {id.ToString(), txtNome.Text, txtTel.Text };
 
             Atualizar();
         }
@@ -92,32 +113,35 @@ namespace ListaTelefonica
                 return;
             }
 
-            int indice = dgvLista.SelectedCells[0].RowIndex;
+            int linha = dgvLista.SelectedCells[0].RowIndex;
 
-            if (indice < 0 || indice >= itens)
+            if (linha < 0 || linha >= lista.Length || lista[linha] == null)
             {
                 MessageBox.Show("Selecione um item válido");
                 return;
             }
 
-            DialogResult result = MessageBox.Show("Deseja de fato remover o item "
-                + lista[indice, 0] + "?",
+            DialogResult result = MessageBox.Show("Deseja de fato remover o contato de "
+                + lista[linha][1] + "?",
                 "REMOVER", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
-            if (result != DialogResult.Yes)
-            {
-                return;
-            }
 
-            for (int i = indice; i < itens - 1; i++)
+            if (result == DialogResult.Yes)
             {
-                lista[i, 0] = lista[i + 1, 0];
-                lista[i, 1] = lista[i + 1, 1];
-            }
+                for (int i = linha; i < Length(lista) - 1; i++)
+                {
+                    lista[i] = lista[i + 1];
+                }
 
-            itens--;
+                lista[Length(lista) - 1] = null;
+            }
 
             Atualizar();
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
