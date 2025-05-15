@@ -51,26 +51,33 @@ namespace ListaTelefonica
                 if (txtTel.Focused && txtTel.MaskFull)
                     btAdicionar_Click(this, EventArgs.Empty);
             }
-        }
-
-        void Atualizar()
-        {
-            dgvLista.Rows.Clear();
-            for (int i = 0; i < Length(lista); i++)
+            else if (e.KeyCode == Keys.A && !txtNome.Focused)
             {
-                DataGridViewRow row = new DataGridViewRow();
-                row.CreateCells(dgvLista);
-                for (int j = 0; j < Length(lista[i]); j++)
-                    row.Cells[j].Value = lista[i][j];
-                dgvLista.Rows.Add(row);
+                btAdicionar_Click(this, EventArgs.Empty);
             }
-            // Limpar campos e estado de edição
-            txtNome.Clear();
-            txtTel.Clear();
-            txtNome.Focus();
-            idContato = ""; // reseta modo edição
-            btAdicionar.Text = "ADICIONAR";
+            else if (e.KeyCode == Keys.R && !txtNome.Focused)
+            {
+                btRemover_Click(this, EventArgs.Empty);
+            }
         }
+            void Atualizar()
+            {
+                dgvLista.Rows.Clear();
+                for (int i = 0; i < Length(lista); i++)
+                {
+                    DataGridViewRow row = new DataGridViewRow();
+                    row.CreateCells(dgvLista);
+                    for (int j = 0; j < Length(lista[i]); j++)
+                        row.Cells[j].Value = lista[i][j];
+                    dgvLista.Rows.Add(row);
+                }
+                // Limpar campos e estado de edição
+                txtNome.Clear();
+                txtTel.Clear();
+                txtNome.Focus();
+                idContato = ""; // reseta modo edição
+                btAdicionar.Text = "ADICIONAR";
+            }
 
         private void btAdicionar_Click(object sender, EventArgs e)
         {
