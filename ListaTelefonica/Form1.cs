@@ -1,38 +1,21 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
+using ListaTelefonica.Models;
 
 namespace ListaTelefonica
 {
     public partial class Form1 : Form
     {
+        List<Contato> lista;
         string idContato = "";
-        string[][] lista;
-        readonly int MAX = 100;
 
         public Form1()
         {
             InitializeComponent();
-            lista = new string[MAX][];
+            lista = new List<Contato>();
             this.KeyPreview = true;
             this.KeyDown += Form1_KeyDown;
-        }
-
-        int Length(string[][] e)
-        {
-            int itens = 0;
-            for (int i = 0; i < e.Length; i++)
-                if (e[i] != null)
-                    itens++;
-            return itens;
-        }
-
-        int Length(string[] e)
-        {
-            int itens = 0;
-            for (int i = 0; i < e.Length; i++)
-                if (e[i] != null)
-                    itens++;
-            return itens;
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -60,36 +43,33 @@ namespace ListaTelefonica
                 btRemover_Click(this, EventArgs.Empty);
             }
         }
-            void Atualizar()
+        void Atualizar()
+        {
+            dgvLista.Rows.Clear();
+
+            for (int i = 0; i < lista.Count; i++)
             {
-                dgvLista.Rows.Clear();
-                for (int i = 0; i < Length(lista); i++)
-                {
-                    DataGridViewRow row = new DataGridViewRow();
-                    row.CreateCells(dgvLista);
-                    for (int j = 0; j < Length(lista[i]); j++)
-                        row.Cells[j].Value = lista[i][j];
-                    dgvLista.Rows.Add(row);
-                }
-                // Limpar campos e estado de edição
-                txtNome.Clear();
-                txtTel.Clear();
-                txtNome.Focus();
-                idContato = ""; // reseta modo edição
-                btAdicionar.Text = "ADICIONAR";
+                DataGridViewRow row = new DataGridViewRow();
+                row.CreateCells(dgvLista);
+
+                row.Cells[0].Value = lista[i].Id;
+                row.Cells[1].Value = lista[i].Nome;
+                row.Cells[2].Value = lista[i].Telefone;
+                dgvLista.Rows.Add(row);
             }
+            // Limpar campos e estado de edição
+            txtNome.Clear();
+            txtTel.Clear();
+            txtNome.Focus();
+            idContato = ""; // reseta modo edição
+            btAdicionar.Text = "ADICIONAR";
+        }
 
         private void btAdicionar_Click(object sender, EventArgs e)
         {
             if (String.IsNullOrWhiteSpace(txtNome.Text) || !txtTel.MaskFull)
             {
                 MessageBox.Show("Insira um nome e telefone válidos.");
-                return;
-            }
-
-            if (Length(lista) >= MAX && idContato == "")
-            {
-                MessageBox.Show("A lista está cheia!", "Máximo de itens atingido");
                 return;
             }
 
@@ -110,10 +90,17 @@ namespace ListaTelefonica
             {
                 // Modo adição com ID incremental
                 int newId = 1;
-                if (Length(lista) > 0)
-                    newId = int.Parse(lista[Length(lista) - 1][0]) + 1;
+                if (lista.Count > 0)
+                    newId = lista.Max(c => c.Id) + 1;
 
-                for (int i = 0; i < lista.Length; i++)
+                Contato novo = new Contato();
+                novo.Id = newId;
+                novo.Nome = txtNome.Text;
+                novo.Telefone = txtTel.Text;
+
+                lista.Add(novo);
+
+                /*for (int i = 0; i < lista.Length; i++)
                 {
                     if (lista[i] == null)
                     {
@@ -123,7 +110,7 @@ namespace ListaTelefonica
                         lista[i][2] = txtTel.Text;
                         break;
                     }
-                }
+                }*/
             }
 
             Atualizar();
@@ -144,8 +131,10 @@ namespace ListaTelefonica
                 return;
             }
 
+            int indice = lista.FindIndex(c => c.Id == lista[linha].Id);
+
             DialogResult result = MessageBox.Show(
-                "Deseja de fato remover o contato de " + lista[linha][1] + "?",
+                $"Deseja de fato remover o contato de {lista[indice].Nome}?",
                 "REMOVER",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question
@@ -153,9 +142,8 @@ namespace ListaTelefonica
 
             if (result == DialogResult.Yes)
             {
-                for (int i = linha; i < Length(lista) - 1; i++)
-                    lista[i] = lista[i + 1];
-                lista[Length(lista) - 1] = null;
+                lista.RemoveAt(indice);
+                Atualizar();
             }
 
             Atualizar();
