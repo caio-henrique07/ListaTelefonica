@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using ListaTelefonica.Models;
 
@@ -76,12 +77,12 @@ namespace ListaTelefonica
             if (idContato != "")
             {
                 // Modo edição
-                for (int i = 0; i < Length(lista); i++)
+                for (int i = 0; i < lista.Count; i++)
                 {
-                    if (lista[i][0] == idContato)
+                    if (lista[i].Id.ToString() == idContato)
                     {
-                        lista[i][1] = txtNome.Text;
-                        lista[i][2] = txtTel.Text;
+                        lista[i].Nome = txtNome.Text;
+                        lista[i].Telefone = txtTel.Text;
                         break;
                     }
                 }
@@ -91,7 +92,7 @@ namespace ListaTelefonica
                 // Modo adição com ID incremental
                 int newId = 1;
                 if (lista.Count > 0)
-                    newId = lista.Max(c => c.Id) + 1;
+                    newId = lista.Max (c => c.Id) + 1;
 
                 Contato novo = new Contato();
                 novo.Id = newId;
@@ -99,18 +100,6 @@ namespace ListaTelefonica
                 novo.Telefone = txtTel.Text;
 
                 lista.Add(novo);
-
-                /*for (int i = 0; i < lista.Length; i++)
-                {
-                    if (lista[i] == null)
-                    {
-                        lista[i] = new string[3];
-                        lista[i][0] = newId.ToString();
-                        lista[i][1] = txtNome.Text;
-                        lista[i][2] = txtTel.Text;
-                        break;
-                    }
-                }*/
             }
 
             Atualizar();
@@ -125,7 +114,7 @@ namespace ListaTelefonica
             }
 
             int linha = dgvLista.SelectedCells[0].RowIndex;
-            if (linha < 0 || linha >= lista.Length || lista[linha] == null)
+            if (linha < 0 || linha >= lista.Count || lista[linha] == null)
             {
                 MessageBox.Show("Selecione um item válido");
                 return;
@@ -151,11 +140,11 @@ namespace ListaTelefonica
 
         private void dgvLista_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0 || e.RowIndex >= Length(lista) || lista[e.RowIndex] == null)
+            if (e.RowIndex < 0 || e.RowIndex >= lista.Count || lista[e.RowIndex] == null)
                 return;
 
             DialogResult confirmacao = MessageBox.Show(
-                "Deseja editar o contato de " + lista[e.RowIndex][1] + "?",
+                "Deseja editar o contato de " + lista[e.RowIndex].Nome + "?",
                 "EDITAR",
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question
@@ -163,9 +152,9 @@ namespace ListaTelefonica
 
             if (confirmacao == DialogResult.Yes)
             {
-                idContato = lista[e.RowIndex][0];
-                txtNome.Text = lista[e.RowIndex][1];
-                txtTel.Text = lista[e.RowIndex][2];
+                idContato = lista[e.RowIndex].Id.ToString();
+                txtNome.Text = lista[e.RowIndex].Nome;
+                txtTel.Text = lista[e.RowIndex].Telefone;
                 txtNome.Focus();
                 btAdicionar.Text = "EDITAR";
             }
