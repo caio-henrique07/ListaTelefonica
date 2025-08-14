@@ -15,6 +15,7 @@ namespace ListaTelefonica
         {
             InitializeComponent();
             lista = new List<Contato>();
+            //edicao = new
             this.KeyPreview = true;
             this.KeyDown += Form1_KeyDown;
         }
