@@ -93,6 +93,7 @@
             this.Controls.Add(this.lblTelefone);
             this.Controls.Add(this.lblNome);
             this.Name = "FrmNovoContato";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "FrmNovoContato";
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -7,14 +7,39 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ListaTelefonica.Models;
+using ListaTelefonica.Presenters;
 
 namespace ListaTelefonica.Views
 {
     public partial class FrmEditarContato : Form
     {
-        public FrmEditarContato()
+        private ContatoPresenter presenter;
+        private Contato edicao;
+        public FrmEditarContato(ContatoPresenter presenter, Contato edicao)
         {
             InitializeComponent();
+
+            this.presenter = presenter;
+            this.edicao = edicao;
+
+            txtNome.Text = edicao.Nome;
+            txtTel.Text = edicao.Telefone;
+        }
+
+        private void btSalvar_Click(object sender, EventArgs e)
+        {
+            string nome = txtNome.Text.Trim();
+            string tel = txtTel.Text.Trim();
+            if (nome.Length == 0 || !txtTel.MaskCompleted)
+            {
+                MessageBox.Show("Preencha os campos corretamente.", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            edicao.Nome = nome;
+            edicao.Telefone = tel;
+            presenter.EditarContato(edicao);
+            this.Close();
         }
     }
 }

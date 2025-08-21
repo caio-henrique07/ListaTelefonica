@@ -22,10 +22,34 @@ namespace ListaTelefonica.Presenters
             db.Contatos.Add(novo);
             return db.SaveChanges() > 0;
         }
+        
+        public List<Contato> BuscarContato(string busca = "")
+        {
+            busca = busca.Trim().ToLower();
+            if (busca == "")
+                return db.Contatos.ToList();
+            return db.Contatos
+                .Where(c => c.Nome.Contains(busca) ||
+                        c.Telefone.Contains(busca))
+                .ToList();
+        }
 
-        
-        
-        
+        public Contato SelecionarContato(int id)
+        {
+            return db.Contatos.Find(id);
+        }
+
+        public bool EditarContato(Contato contato)
+        {
+            db.Contatos.Update(contato);
+            return db.SaveChanges() > 0;
+        }
+
+        public bool RemoverContato(Contato contato)
+        {
+            db.Contatos.Remove(contato);
+            return db.SaveChanges() > 0;
+        }
 
     }
 }

@@ -13,9 +13,9 @@ namespace ListaTelefonica
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql("Host=localhost;" + 
-                                     "Port=5432" + 
-                                     "Database=ListaTelefonica2A1;" +
+            optionsBuilder.UseNpgsql("Host=localhost;" +
+                                     "Port=5432;" +
+                                     "Database=postgres;" +
                                      "User Id=postgres;" +
                                      "Password=postgres;");
         }

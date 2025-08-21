@@ -52,6 +52,7 @@
             this.btSalvar.TabIndex = 9;
             this.btSalvar.Text = "Salvar";
             this.btSalvar.UseVisualStyleBackColor = true;
+            this.btSalvar.Click += new System.EventHandler(this.btSalvar_Click);
             // 
             // txtNome
             // 
@@ -92,6 +93,7 @@
             this.Controls.Add(this.lblTelefone);
             this.Controls.Add(this.lblNome);
             this.Name = "FrmEditarContato";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "FrmEditarContato";
             this.ResumeLayout(false);
             this.PerformLayout();
